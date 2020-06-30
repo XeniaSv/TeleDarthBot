@@ -1,11 +1,5 @@
 from datetime import datetime
 
-from apis.cbRF import CbBank
-from apis.VTBBank import VtbBank
-from apis.BankNeva import BankNeva
-from apis.Raiffasen import RaiffasenBank
-from apis.SpbBank import SpbBank
-from apis.EastBank import EastBank
 from telegram import Bot
 from telegram import Update
 from telegram.ext import Updater
@@ -41,79 +35,6 @@ def do_time(bot: Bot, update: Update):
     bot.send_message(
         chat_id=update.message.chat_id,
         text="Дата и время на сервере: \n{}".format(text),
-    )
-
-
-# Список валют
-def do_currency(bot: Bot, update: Update):
-    cb_bank = CbBank()
-    item_from_CB_usd = cb_bank.get_rates_USD()
-    item_from_CB_eur = cb_bank.get_rates_EUR()
-    message_from_CB_bank = f'{item_from_CB_usd.bank_name}\n' \
-                           + f'Курс {item_from_CB_usd.name} = {item_from_CB_usd.rate} руб' \
-                           + '\n' \
-                           + f'Курс {item_from_CB_eur.name} = {item_from_CB_eur.rate} руб\n\n'
-
-    vtb_bank = VtbBank()
-    item_from_VTB_usd = vtb_bank.get_rates_USD()
-    item_from_VTB_eur = vtb_bank.get_rates_EUR()
-    message_from_VTB_bank = f'{item_from_VTB_usd.bank_name}:\n' \
-                            + f'Курс {item_from_VTB_usd.name} = {item_from_VTB_usd.rate} руб' \
-                            + '\n' \
-                            + f'Курс {item_from_VTB_eur.name} = {item_from_VTB_eur.rate} руб\n\n'
-
-    bank_neva = BankNeva()
-    item_from_Bank_Neva_usd = bank_neva.get_rates_USD()
-    item_from_Bank_Neva_eur = bank_neva.get_rates_EUR()
-    message_from_Bank_Neva = f'{item_from_Bank_Neva_usd.bank_name}:\n' \
-                             + f'Покупка: {item_from_Bank_Neva_usd.name} = {item_from_Bank_Neva_usd.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_Bank_Neva_usd.name} = {item_from_Bank_Neva_usd.rate_sell} руб\n' \
-                             + f'Покупка: {item_from_Bank_Neva_eur.name} = {item_from_Bank_Neva_eur.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_Bank_Neva_eur.name} = {item_from_Bank_Neva_eur.rate_sell} руб\n\n'
-
-    raiffasen_bank = RaiffasenBank()
-    item_from_Raiffasen_bank_usd = raiffasen_bank.get_rates_USD()
-    item_from_Raiffasen_bank_eur = raiffasen_bank.get_rates_EUR()
-    message_from_Raiffasen_bank = f'{item_from_Raiffasen_bank_usd.bank_name}:\n' \
-                                  + f'Покупка: {item_from_Raiffasen_bank_usd.name} = {item_from_Raiffasen_bank_usd.rate_buy} руб' \
-                                  + '\n' \
-                                  + f'Продажа: {item_from_Raiffasen_bank_usd.name} = {item_from_Raiffasen_bank_usd.rate_sell} руб\n' \
-                                  + f'Покупка: {item_from_Raiffasen_bank_eur.name} = {item_from_Raiffasen_bank_eur.rate_buy} руб' \
-                                  + '\n' \
-                                  + f'Продажа: {item_from_Raiffasen_bank_eur.name} = {item_from_Raiffasen_bank_eur.rate_sell} руб\n\n'
-
-    spb_bank = SpbBank()
-    item_from_Spb_bank_usd = spb_bank.get_rates_USD()
-    item_from_Spb_bank_eur = spb_bank.get_rate_EUR()
-    message_from_Spb_bank = f'{item_from_Spb_bank_usd.bank_name}:\n' \
-                             + f'Покупка: {item_from_Spb_bank_usd.name} = {item_from_Spb_bank_usd.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_Spb_bank_usd.name} = {item_from_Spb_bank_usd.rate_sell} руб\n' \
-                             + f'Покупка: {item_from_Spb_bank_eur.name} = {item_from_Spb_bank_eur.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_Spb_bank_eur.name} = {item_from_Spb_bank_eur.rate_sell} руб\n\n'
-
-    east_bank = EastBank()
-    item_from_East_bank_usd = east_bank.get_rates_USD()
-    item_from_East_bank_eur = east_bank.get_rates_EUR()
-    message_from_East_bank = f'{item_from_East_bank_usd.bank_name}:\n' \
-                             + f'Покупка: {item_from_East_bank_usd.name} = {item_from_East_bank_usd.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_East_bank_usd.name} = {item_from_East_bank_usd.rate_sell} руб\n' \
-                             + f'Покупка: {item_from_East_bank_eur.name} = {item_from_East_bank_eur.rate_buy} руб' \
-                             + '\n' \
-                             + f'Продажа: {item_from_East_bank_eur.name} = {item_from_East_bank_eur.rate_sell} руб\n\n'
-
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text=message_from_CB_bank +
-             message_from_VTB_bank +
-             message_from_Bank_Neva +
-             message_from_Raiffasen_bank +
-             message_from_Spb_bank +
-             message_from_East_bank,
     )
 
 

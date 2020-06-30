@@ -1,67 +1,118 @@
+from logging import getLogger
 import datetime
-from collections import namedtuple
+
 import xmltodict
 import requests
+from collections import namedtuple
 
-Rate = namedtuple('Rate', 'bank_name,name,rate')
+logger = getLogger(__name__)
+Rate = namedtuple('Rate', 'name,rate')
 
 
-# Замена запятой на точку, так как json возращает запятую
+class ParserError(Exception):
+    """Неизвестная ошибка при запросе API CB"""
+
+
+def parser_cb_xml(date_now: datetime.date):
+    get_curl = 'http://www.cbr.ru/scripts/XML_daily.asp'
+    date_format = "%d/%m/%Y"
+    params = {
+        "date_req": date_now.strftime(date_format)
+    }
+
+    try:
+        r = requests.get(get_curl, params=params)
+        resp = r.text
+        return xmltodict.parse(resp)
+    except Exception:
+        logger.exception("Parser error")
+        raise ParserError
+
+
 def str_to_float(item: str):
     item = item.replace(',', '.')
     return float(item)
 
 
-# Парсер xml
-def parser_xml():
-    # URL запроса
-    url = "http://www.cbr.ru/scripts/XML_daily.asp"
-    # Формат даты: день/месяц/год
-    date_format = "%d/%m/%Y"
-
-    # Дата запроса
-    today = datetime.datetime.today()
-    params = {
-        "date_req": today.strftime(date_format),
-    }
-    r = requests.get(url, params=params)
-    resp = r.text
-
-    return xmltodict.parse(resp)
-
-
 class CbBank:
-    info = None
+    __info = None
 
-    def __init__(self):
-        self.info = parser_xml()
+    def __init__(self, date_now: datetime.date):
+        self.__info = parser_cb_xml(date_now)
 
-    # Получение из JSON курс валюты USD
-    def get_rates_USD(self):
-        # Параметры поиска по JSON
-        section_id_USD = 'R01235'
+    def get_rates_usd(self):
+        section_id = 'R01235'
+        try:
+            for item in self.__info['ValCurs']['Valute']:
+                if item['@ID'] == section_id:
+                    r = Rate(
+                        name=item['CharCode'],
+                        rate=str_to_float(item['Value'])
+                    )
+                    return r
+            return None
 
-        for item in self.info['ValCurs']['Valute']:
-            if item['@ID'] == section_id_USD:
-                r = Rate(
-                    bank_name='Центробанк',
-                    name=item['CharCode'],
-                    rate=str_to_float(item['Value'])
-                )
-                return r
-        return None
+        except Exception:
+            logger.exception("Invalid key")
+            raise KeyError
 
-    # Получение из JSON курс валюты EUR
-    def get_rates_EUR(self):
-        # Параметры поиска по JSON
-        section_id_EUR = 'R01239'
+    def get_rates_eur(self):
+        section_id = 'R01239'
+        try:
+            for item in self.__info['ValCurs']['Valute']:
+                if item['@ID'] == section_id:
+                    r = Rate(
+                        name=item['CharCode'],
+                        rate=str_to_float(item['Value'])
+                    )
+                    return r
+            return None
 
-        for item in self.info['ValCurs']['Valute']:
-            if item['@ID'] == section_id_EUR:
-                r = Rate(
-                    bank_name='Центробанк',
-                    name=item['CharCode'],
-                    rate=str_to_float(item['Value'])
-                )
-                return r
-        return None
+        except Exception:
+            logger.exception("Invalid key")
+            raise KeyError
+
+    def get_rates_gbp(self):
+        section_id = 'R01035'
+        try:
+            for item in self.__info['ValCurs']['Valute']:
+                if item['@ID'] == section_id:
+                    r = Rate(
+                        name=item['CharCode'],
+                        rate=str_to_float(item['Value'])
+                    )
+                    return r
+            return None
+        except Exception:
+            logger.exception("Invalid key")
+            raise KeyError
+
+    def get_rates_jpy(self):
+        section_id = 'R01820'
+        try:
+            for item in self.__info['ValCurs']['Valute']:
+                if item['@ID'] == section_id:
+                    r = Rate(
+                        name=item['CharCode'],
+                        rate=str_to_float(item['Value'])
+                    )
+                    return r
+            return None
+        except Exception:
+            logger.exception("Invalid key")
+            raise KeyError
+
+
+if __name__ == '__main__':
+    try:
+        bank = CbBank(datetime.date(2018, 8, 2))
+        print(bank.get_rates_usd())
+        print(bank.get_rates_eur())
+        print(bank.get_rates_gbp())
+        print(bank.get_rates_jpy())
+    except KeyError:
+        logger.info("Invalid key")
+    except ParserError:
+        logger.info("Parser error")
+    except ValueError:
+        logger.info("Value error")
