@@ -16,12 +16,14 @@ class ParserError(Exception):
 def parser_cb_xml(date_now: datetime.date):
     get_curl = 'http://www.cbr.ru/scripts/XML_daily.asp'
     date_format = "%d/%m/%Y"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'}
     params = {
         "date_req": date_now.strftime(date_format)
     }
 
     try:
-        r = requests.get(get_curl, params=params)
+        r = requests.get(get_curl, params=params, headers=headers)
         resp = r.text
         return xmltodict.parse(resp)
     except Exception:
