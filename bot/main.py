@@ -18,6 +18,11 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def do_start(message):
+    """
+    Функция старта
+    :param message: сообщение пользователя
+    :return: сообщение о старте
+    """
     chat_id = message.chat.id
     bot.send_message(
         chat_id=chat_id,
@@ -27,6 +32,11 @@ def do_start(message):
 
 @bot.message_handler(commands=['help'])
 def do_help(message):
+    """
+    Функция помощи
+    :param message: сообщение пользователя
+    :return: сообщение о помощи
+    """
     chat_id = message.chat.id
     bot.send_message(
         chat_id=chat_id,
@@ -42,6 +52,11 @@ def do_help(message):
 
 @bot.message_handler(commands=['cities'])
 def do_cities(message):
+    """
+    Функция вывода всех городов
+    :param message: сообщение от пользователя
+    :return: список городов
+    """
     chat_id = message.chat.id
     text = 'Вот тебе города. Скоро мы будем во всей галактике\n\n'
     for city in cities.keys():
@@ -54,6 +69,11 @@ def do_cities(message):
 
 @bot.message_handler(commands=['centralbank'])
 def do_central_bank(message):
+    """
+    Функция поиска курса заданной валюты и даты в Центробанке
+    :param message: сообщение пользователя
+    :return: курс валюты на заданное число
+    """
     chat_id = message.chat.id
     try:
         text = str(message.text).lower()
@@ -121,6 +141,11 @@ def do_central_bank(message):
 
 @bot.message_handler(content_types=['text'])
 def do_text(message):
+    """
+    Функция ответа на сообщение
+    :param message: сообщение от пользователя
+    :return: сообщение пользователю
+    """
     if message.chat.type == "private":
         chat_id = message.chat.id
         text = str(message.text).lower()
@@ -144,6 +169,11 @@ def do_text(message):
 
 
 def get_text_from_bankiRu(text):
+    """
+    Функция поиска курса валюты в городе
+    :param text: исходный текст пользователя
+    :return: строка с информацией
+    """
     result = re.findall(r'доллар|евр|фунт|иен|юан', text)
     result += re.findall(
         r'благовещенск|архангельск|астрахан|белгород|брянск|владимир|волгоград|вологд|воронеж|иванов|иркутск|'
@@ -211,6 +241,11 @@ def answer_sticker(message):
 
 @bot.message_handler(content_types=["photo"])
 def answer_photo(message):
+    """
+    Функция ответа на стикер
+    :param message: сообщение от пользователя
+    :return: moon face
+    """
     if message.chat.type == "private":
         bot.send_message(
             chat_id=message.chat.id,
@@ -220,6 +255,11 @@ def answer_photo(message):
 
 @bot.message_handler(content_types=["audio"])
 def answer_audio(message):
+    """
+    Функция ответа на аудио
+    :param message: сообщение от пользователя
+    :return: moon face
+    """
     if message.chat.type == "private":
         bot.send_message(
             chat_id=message.chat.id,
@@ -229,6 +269,11 @@ def answer_audio(message):
 
 @bot.message_handler(content_types=["document"])
 def answer_document(message):
+    """
+    Функция ответа на документ
+    :param message: сообщение от пользователя
+    :return: moon face
+    """
     if message.chat.type == "private":
         bot.send_message(
             chat_id=message.chat.id,
