@@ -190,10 +190,9 @@ def do_text(message):
     if message.chat.type == "group":
         chat_id = message.chat.id
         text = str(message.text).lower()
-        if text.find('@Currency_Darth_bot'.lower()) > -1:
+        if text.find("@Currency_Darth_bot".lower()) > -1:
             Logs.log_message(message)
             text = get_text_from_bankiRu(text)
-
             Logs.log_message(
                 bot.send_message(
                     chat_id=chat_id,
