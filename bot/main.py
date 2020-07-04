@@ -4,8 +4,8 @@ import re
 
 from bot.config import TOKEN
 
-from info.DAO import currencies
-from info.DAO import cities
+from bot.DAO import currencies
+from bot.DAO import cities
 
 from apis.centralBank import CentralBank
 from apis.centralBank import CbError
@@ -96,7 +96,7 @@ def do_central_bank(message):
                     text=text
                 )
 
-            if result[0] == 'eвр':
+            if result[0] == 'евр':
                 rate = bank.get_rates_eur()
                 text += f'{rate.name} = {rate.rate} руб.'
                 bot.send_message(
